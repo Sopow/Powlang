@@ -1,26 +1,53 @@
-# Définir les variables pour le nombre de chats et de chiens
-define number cats as 3
-define number dogs as 4
+# Define a number x
+define number x as 5
 
-# Afficher les valeurs initiales
-show("Initialement, nous avons", cats, "chats et", dogs, "chiens.")
+# Show the result of x + 3
+show(x + 3)      # Should print 8
 
-# Effectuer des opérations arithmétiques pour augmenter le nombre d'animaux
-define number newCats as cats + 2
-define number newDogs as dogs * 2
+# Show the result of x > 2
+show(x > 2)      # Should print true
 
-# Afficher les nouveaux nombres d'animaux
-show("Après quelques mois, nous avons", newCats, "chats et", newDogs, "chiens.")
+# Show the result of x =e 5 (x is equal to 5)
+show(x =e 5)     # Should print true
 
-# Comparer les nombres de chats et de chiens
-show("Avons-nous plus de chiens que de chats ?", new_dogs > newCats)
-show("Avons-nous moins de chats que de chiens ?", newCats < newDogs)
-show("Avons-nous exactement 5 chats maintenant ?", newCats =e 5)
+# Show the result of x =e 3 (x is not equal to 3)
+show(x =e 3)     # Should print false
 
-# Boucle pour simuler l'adoption de nouveaux chats
-show("Les chats sont adoptés un par un jusqu'à ce qu'il n'en reste plus.")
-when newCats > 0 :: newCats-- => {
-    show("Il reste", newCats, "chats.")
+# Show the result of x =s 5 (x is equal to 5)
+show(x =s 5)     # Should print true
+
+# Show the result of x =s 3 (x is greater than or equal to 3)
+show(x =s 3)     # Should print true
+
+# Show the result of x =i 5 (x is less than or equal to 5)
+show(x =i 5)     # Should print true
+
+# Show the result of x =i 6 (x is less than or equal to 6)
+show(x =i 6)     # Should print true
+
+# Show the result of x =i 3 (x is not less than or equal to 3)
+show(x =i 3)     # Should print false
+
+# Define a string y
+define string y as "hello"
+
+# Show the string y
+show(y)          # Should print hello
+
+# Show the result of y =e "hello"
+show(y =e "hello") # Should print true
+
+# Show the result of y =e "world"
+show(y =e "world") # Should print false
+
+# Define another number z
+define number z as 10
+
+# Show the result of z % 3 (modulo operation)
+define number modResult as z % 3
+show(modResult) # Should print 1
+
+# Use a loop to decrement x until it is less than or equal to 0
+when x > 0 :: x-- => {
+    show(x)
 }
-
-show("Tous les chats ont été adoptés !")

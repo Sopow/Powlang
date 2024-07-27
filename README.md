@@ -7,13 +7,14 @@ PowLang est un langage de programmation simple conçu pour illustrer les concept
 - Déclaration de variables de type nombre et chaîne de caractères
 - Affichage des expressions et des résultats
 - Opérateurs de comparaison et arithmétiques
+- Boucles `when`
 - Prise en charge des commentaires
 
 ## Installation
 
 1. Clonez le dépôt:
     ```sh
-    git clone https://github.com/votre-utilisateur/powlang-compiler.git
+    git clone https://github.com/Sopow/powlang.git
     cd powlang-compiler
     ```
 
@@ -37,7 +38,7 @@ PowLang est un langage de programmation simple conçu pour illustrer les concept
 
 Pour exécuter le compilateur avec un fichier PowLang, utilisez la commande suivante:
 ```sh
-node compiler.js example.pow
+node compiler/compiler.js example.pow
 ```
 
 ### Interface Web
@@ -54,48 +55,59 @@ node compiler.js example.pow
 Voici un exemple de fichier `example.pow` qui illustre les fonctionnalités du langage:
 
 ```plaintext
-// Define a number x
-define number x = 5
+# Define a number x
+define number x as 5
 
-// Show the result of x + 3
-show(x + 3)      // Should print 8
+# Show the result of x + 3
+show(x + 3)      # Should print 8
 
-// Show the result of x > 2
-show(x > 2)      // Should print true
+# Show the result of x > 2
+show(x > 2)      # Should print true
 
-// Show the result of x =e 5 (x is equal to 5)
-show(x =e 5)     // Should print true
+# Show the result of x =e 5 (x is equal to 5)
+show(x =e 5)     # Should print true
 
-// Show the result of x =e 3 (x is not equal to 3)
-show(x =e 3)     // Should print false
+# Show the result of x =e 3 (x is not equal to 3)
+show(x =e 3)     # Should print false
 
-// Show the result of x =s 5 (x is equal to 5)
-show(x =s 5)     // Should print true
+# Show the result of x =s 5 (x is equal to 5)
+show(x =s 5)     # Should print true
 
-// Show the result of x =s 3 (x is greater than or equal to 3)
-show(x =s 3)     // Should print true
+# Show the result of x =s 3 (x is greater than or equal to 3)
+show(x =s 3)     # Should print true
 
-// Show the result of x =i 5 (x is less than or equal to 5)
-show(x =i 5)     // Should print true
+# Show the result of x =i 5 (x is less than or equal to 5)
+show(x =i 5)     # Should print true
 
-// Show the result of x =i 6 (x is less than or equal to 6)
-show(x =i 6)     // Should print true
+# Show the result of x =i 6 (x is less than or equal to 6)
+show(x =i 6)     # Should print true
 
-// Show the result of x =i 3 (x is not less than or equal to 3)
-show(x =i 3)     // Should print false
+# Show the result of x =i 3 (x is not less than or equal to 3)
+show(x =i 3)     # Should print false
 
-// Define a string y
-define string y = "hello"
+# Define a string y
+define string y as "hello"
 
-// Show the string y
-show(y)          // Should print hello
+# Show the string y
+show(y)          # Should print hello
 
-// Show the result of y =e "hello"
-show(y =e "hello") // Should print true
+# Show the result of y =e "hello"
+show(y =e "hello") # Should print true
 
-// Show the result of y =e "world"
-show(y =e "world") // Should print false
+# Show the result of y =e "world"
+show(y =e "world") # Should print false
 
+# Define another number z
+define number z as 10
+
+# Show the result of z % 3 (modulo operation)
+define number modResult as z % 3
+show(modResult) # Should print 1
+
+# Use a loop to decrement x until it is less than or equal to 0
+when x > 0 :: x-- => {
+    show(x)
+}
 ```
 
 ## Contribution
@@ -104,4 +116,4 @@ Les contributions sont les bienvenues ! Pour contribuer, veuillez créer une bra
 
 ## License
 
-Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.# Powlang
+Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus de détails.

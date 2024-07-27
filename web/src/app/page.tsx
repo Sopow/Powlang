@@ -5,8 +5,8 @@ import axios from "axios";
 import powLangGrammar from "../powlang-grammar";
 import powLangStyle from "../powlang-style";
 
-function applySyntaxHighlighting(code: string) {
-  const tokens: { type: string; value: string; index: number }[] = [];
+function applySyntaxHighlighting(code: string | any) {
+  const tokens = [];
   const regex = new RegExp(
     Object.keys(powLangGrammar)
       .map((key) => `(?<${key}>${powLangGrammar[key].source})`)
@@ -54,10 +54,11 @@ export default function Home() {
   const [code, setCode] = useState("");
   const [output, setOutput] = useState("");
   const [time, setTime] = useState("");
+  const [enableLogs, setEnableLogs] = useState(false);
 
   const handleCompile = async () => {
     try {
-      const response = await axios.post("/api/compiler", { code });
+      const response = await axios.post("/api/compiler", { code, enableLogs });
       setOutput(response.data.output);
       setTime(response.data.time);
     } catch (error: any) {
@@ -123,43 +124,65 @@ show("Tous les chats ont été adoptés !")`;
   };
 
   return (
-    <div className="container">
-      <main>
+    <div className="min-h-screen min-w-screen p-8 flex flex-col justify-center items-center bg-gray-900 text-gray-100">
+      <main className="p-20 flex flex-col justify-center items-center w-full max-w-4xl">
         <div className="flex justify-center items-center gap-8">
-          <h1 className="title">PowLang Compiler</h1>
+          <h1 className="text-4xl mb-4 text-pink-400 text-center">PowLang Compiler</h1>
           <img src="/powlang.png" className="h-24 w-24" alt="PowLang Logo"></img>
         </div>
         <textarea
-          className="outline-0"
+          className="w-full h-48 my-5 p-2 font-mono text-xl border border-gray-700 rounded bg-gray-800 text-gray-100 outline-none"
           value={code}
           onChange={(e) => setCode(e.target.value)}
           placeholder="Enter your PowLang code here..."
-          rows={10}
-          cols={50}
         />
-        <div className="flex gap-4">
-          <button onClick={handleCompile} disabled={code.length <= 0} className="disabled:opacity-50 disabled:cursor-not-allowed">Compile</button>
-          <button onClick={handleTestFunCode}>Tester un code rigolo</button>
+        <div className="flex gap-4 mb-4">
+          <button
+            onClick={handleCompile}
+            disabled={code.length <= 0}
+            className="py-2 px-4 bg-pink-400 text-gray-900 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Compile
+          </button>
+          <button
+            onClick={handleTestFunCode}
+            className="py-2 px-4 bg-blue-500 text-gray-900 rounded"
+          >
+            Tester un code rigolo
+          </button>
         </div>
-        <h2>Compilation time</h2>
-        <pre>{time}</pre>
-        <h2>Output</h2>
-        <pre>{output}</pre>
-        <h2>Code</h2>
+        <label className="flex items-center mb-4">
+          <input
+            type="checkbox"
+            checked={enableLogs}
+            onChange={(e) => setEnableLogs(e.target.checked)}
+            className="mr-2"
+          />
+          <span>Afficher les logs supplémentaires</span><span className="font-bold ml-1">(AVANCÉ)</span>
+        </label>
+        <h2 className="text-2xl text-blue-400 mb-2">Compilation time</h2>
+        <pre className="w-full p-2 bg-gray-800 border border-gray-700 rounded mb-4 overflow-auto">{time}</pre>
+        <h2 className="text-2xl text-blue-400 mb-2">Output</h2>
+        <pre className="w-full p-2 bg-gray-800 border border-gray-700 rounded mb-4 overflow-auto">{output}</pre>
+        <h2 className="text-2xl text-blue-400 mb-2">Code</h2>
         <pre
-          className="language-powlang"
+          className="w-full p-2 bg-gray-800 border border-gray-700 rounded overflow-auto"
           style={powLangStyle['pre[class*="language-"]']}
         >
           {applySyntaxHighlighting(code)}
         </pre>
-        <h2>Keyword Dictionary</h2>
-        <ul className="dictionary">
+        <h2 className="text-2xl text-blue-400 mb-2">Keyword Dictionary</h2>
+        <ul className="list-none p-0 mt-4 w-full">
           {Object.entries(keywordDictionary).map(
             ([keyword, { description, value, usage }], key) => (
-              <li key={keyword} onClick={() => handleKeywordClick(value, key)}>
-                <strong>{keyword}:</strong> {description}
+              <li
+                key={keyword}
+                onClick={() => handleKeywordClick(value, key)}
+                className="mb-2 cursor-pointer transition-colors p-2 bg-gray-800 border border-gray-700 rounded hover:text-green-400"
+              >
+                <strong className="text-green-400">{keyword}:</strong> {description}
                 <pre
-                  className="my-4"
+                  className="my-4 bg-gray-800 border-none text-gray-100 p-0 m-0"
                   style={powLangStyle['pre[class*="language-"]']}
                 >
                   {applySyntaxHighlighting(usage)}
@@ -169,148 +192,6 @@ show("Tous les chats ont été adoptés !")`;
           )}
         </ul>
       </main>
-
-      <style jsx>{`
-        .container {
-          min-height: 100vh;
-          min-width: 100vw;
-          padding: 0 2rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          background: #1e1e1e;
-          color: #f8f8f2;
-        }
-
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          width: 100%;
-          max-width: 800px;
-        }
-
-        h1 {
-          font-size: 2.5rem;
-          margin-bottom: 1rem;
-          color: #ff79c6;
-          text-align: center;
-        }
-
-        textarea {
-          width: 100%;
-          height: 200px;
-          margin: 20px 0;
-          padding: 10px;
-          font-family: monospace;
-          font-size: 1.2em;
-          border: 1px solid #444;
-          border-radius: 5px;
-          background: #2d2d2d;
-          color: #f8f8f2;
-          resize: none;
-        }
-
-        button {
-          padding: 10px 20px;
-          font-size: 1em;
-          cursor: pointer;
-          margin-bottom: 20px;
-          border: none;
-          border-radius: 5px;
-          background: #ff79c6;
-          color: #f8f8f2;
-          transition: background 0.3s ease;
-        }
-
-        button:hover {
-          background: #ff92d6;
-        }
-
-        h2 {
-          margin-top: 20px;
-          color: #8be9fd;
-          text-align: center;
-        }
-
-        pre {
-          width: 100%;
-          white-space: pre-wrap;
-          word-wrap: break-word;
-          padding: 1em;
-          background: #2d2d2d;
-          border: 1px solid #444;
-          border-radius: 5px;
-          overflow-x: hidden;
-          overflow-y: auto;
-          max-height: 200px;
-        }
-
-        .dictionary {
-          list-style: none;
-          padding: 0;
-          margin-top: 20px;
-          width: 100%;
-        }
-
-        .dictionary li {
-          margin-bottom: 10px;
-          cursor: pointer;
-          transition: color 0.3s;
-          padding: 10px;
-          background: #2d2d2d;
-          border: 1px solid #444;
-          border-radius: 5px;
-        }
-
-        .dictionary li:hover {
-          color: #50fa7b;
-        }
-
-        .dictionary strong {
-          color: #50fa7b;
-        }
-
-        .dictionary pre {
-          background: #2d2d2d;
-          border: none;
-          color: #f8f8f2;
-          padding: 0;
-          margin: 0;
-        }
-
-        .flex {
-          display: flex;
-        }
-
-        .gap-4 {
-          gap: 1rem;
-        }
-
-        .gap-8 {
-          gap: 2rem;
-        }
-
-        .justify-center {
-          justify-content: center;
-        }
-
-        .items-center {
-          align-items: center;
-        }
-
-        .disabled:opacity-50 {
-          opacity: 0.5;
-        }
-
-        .disabled:cursor-not-allowed {
-          cursor: not-allowed;
-        }
-      `}</style>
     </div>
   );
 }

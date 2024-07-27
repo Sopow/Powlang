@@ -1,16 +1,11 @@
 {
-  "name": "powlang",
-  "displayName": "PowLang",
-  "description": "Syntax highlighting for PowLang",
-  "version": "0.0.1",
-  "publisher": "your-publisher-name",
-  "engines": {
-    "vscode": "^1.50.0"
+  "name": "powlang-root",
+  "version": "1.0.0",
+  "scripts": {
+    "deploy": "vercel --prod"
   },
-  "categories": [
-    "Programming Languages"
-  ],
   "dependencies": {
-    "katex": "^0.16.11"
+    "@vercel/blob": "^0.23.4",
+    "vercel": "^23.0.1"
   }
 }

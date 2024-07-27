@@ -1,31 +1,38 @@
 import { NextResponse } from 'next/server';
-import { exec } from 'child_process';
-import fs from 'fs';
-import path from 'path';
+import tokenize from '@/../../compiler/lexer';
+import parse from '@/../../compiler/parser';
+import evaluate from '@/../../compiler/generator';
 
-export async function POST(req: Request) {
-  const { code } = await req.json();
-  const filePath = path.resolve('temp.pow');
+export async function POST(req: Request): Promise<Response> {
+  const { code, enableLogs } = await req.json();
 
-  fs.writeFileSync(filePath, code);
-
-  return new Promise((resolve) => {
+  try {
     const startTime = Date.now();
-    exec(`node ${path.resolve('../compiler.js')} ${filePath}`, (error, stdout, stderr) => {
-      fs.unlinkSync(filePath);  // Ensure the file is deleted
+    let output = '';
 
-      if (error) {
-        const errorMessage = stderr.split('\n')[0]; // Extract only the first line of the error message
-        resolve(
-          NextResponse.json({ error: `Error during compilation: ${errorMessage}` }, { status: 500 })
-        );
-      } else {
-        const endTime = Date.now();
-        const compilationTime = `Code compiled in ${endTime - startTime} ms ✨`;
-        resolve(
-          NextResponse.json({ output: stdout, time: compilationTime }, { status: 200 })
-        );
-      }
-    });
-  });
+    // Capture console.log
+    const originalLog = console.log;
+    console.log = (...args) => {
+      output += args.join(' ') + '\n';
+      originalLog(...args);
+    };
+
+    const tokens = tokenize(code, enableLogs);
+    if (enableLogs) console.log('Tokens:', tokens);
+
+    const ast = parse(tokens, enableLogs);
+    if (enableLogs) console.log('AST:', JSON.stringify(ast, null, 2));
+
+    evaluate(ast, enableLogs);
+
+    // Restore console.log
+    console.log = originalLog;
+
+    const endTime = Date.now();
+    const compilationTime = `Code compiled in ${endTime - startTime} ms ✨`;
+
+    return NextResponse.json({ output, time: compilationTime }, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json({ error: `Error during compilation: ${error.message}` }, { status: 500 });
+  }
 }
