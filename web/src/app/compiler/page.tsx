@@ -60,7 +60,7 @@ export default function Home() {
   const spinnerFrames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: NodeJS.Timeout | undefined;
     if (isCompiling) {
       interval = setInterval(() => {
         setSpinnerFrame((prevFrame) => (prevFrame + 1) % spinnerFrames.length);

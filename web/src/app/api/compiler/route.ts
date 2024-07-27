@@ -12,8 +12,8 @@ export async function POST(req: Request): Promise<Response> {
 
   return new Promise((resolve) => {
     const startTime = Date.now();
-    let waitingMessageTimeout: NodeJS.Timeout;
-    let spinnerInterval: NodeJS.Timeout;
+    let waitingMessageTimeout: NodeJS.Timeout | undefined;
+    let spinnerInterval: NodeJS.Timeout | undefined;
 
     const showWaitingMessage = () => {
       let frameIndex = 0;
@@ -46,7 +46,7 @@ export async function POST(req: Request): Promise<Response> {
       console.log = originalLog;
 
       clearTimeout(waitingMessageTimeout);
-      clearInterval(spinnerInterval);
+      if (spinnerInterval) clearInterval(spinnerInterval);
 
       const endTime = Date.now();
       const compilationTime = `Code compiled in ${endTime - startTime} ms ✨`;
@@ -54,7 +54,7 @@ export async function POST(req: Request): Promise<Response> {
       resolve(NextResponse.json({ output, time: compilationTime }, { status: 200 }));
     } catch (error: any) {
       clearTimeout(waitingMessageTimeout);
-      clearInterval(spinnerInterval);
+      if (spinnerInterval) clearInterval(spinnerInterval);
       resolve(NextResponse.json({ error: `Error during compilation: ${error.message}` }, { status: 500 }));
     }
   });
