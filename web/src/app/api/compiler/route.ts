@@ -1,38 +1,61 @@
 import { NextResponse } from 'next/server';
+import { exec } from 'child_process';
 import tokenize from '@/../../compiler/lexer';
 import parse from '@/../../compiler/parser';
 import evaluate from '@/../../compiler/generator';
 
+const spinnerFrames = ['⠋', '⠙', '⠹', '⠸', '⠼', '⠴', '⠦', '⠧', '⠇', '⠏'];
+
 export async function POST(req: Request): Promise<Response> {
   const { code, enableLogs } = await req.json();
+  const logDetails = enableLogs ?? false;
 
-  try {
+  return new Promise((resolve) => {
     const startTime = Date.now();
-    let output = '';
+    let waitingMessageTimeout: NodeJS.Timeout;
+    let spinnerInterval: NodeJS.Timeout;
 
-    // Capture console.log
-    const originalLog = console.log;
-    console.log = (...args) => {
-      output += args.join(' ') + '\n';
-      originalLog(...args);
+    const showWaitingMessage = () => {
+      let frameIndex = 0;
+      spinnerInterval = setInterval(() => {
+        const spinnerFrame = spinnerFrames[frameIndex];
+        resolve(
+          NextResponse.json({ output: `Compiling... This is taking longer than usual. ${spinnerFrame}` }, { status: 202 })
+        );
+        frameIndex = (frameIndex + 1) % spinnerFrames.length;
+      }, 100);
     };
 
-    const tokens = tokenize(code, enableLogs);
-    if (enableLogs) console.log('Tokens:', tokens);
+    waitingMessageTimeout = setTimeout(showWaitingMessage, 200);
 
-    const ast = parse(tokens, enableLogs);
-    if (enableLogs) console.log('AST:', JSON.stringify(ast, null, 2));
+    try {
+      const tokens = tokenize(code, logDetails);
+      if (logDetails) console.log('Tokens:', tokens);
 
-    evaluate(ast, enableLogs);
+      const ast = parse(tokens, logDetails);
+      if (logDetails) console.log('AST:', JSON.stringify(ast, null, 2));
 
-    // Restore console.log
-    console.log = originalLog;
+      let output = '';
+      const originalLog = console.log;
+      console.log = (...args) => {
+        output += args.join(' ') + '\n';
+        originalLog(...args);
+      };
 
-    const endTime = Date.now();
-    const compilationTime = `Code compiled in ${endTime - startTime} ms ✨`;
+      evaluate(ast, logDetails);
+      console.log = originalLog;
 
-    return NextResponse.json({ output, time: compilationTime }, { status: 200 });
-  } catch (error: any) {
-    return NextResponse.json({ error: `Error during compilation: ${error.message}` }, { status: 500 });
-  }
+      clearTimeout(waitingMessageTimeout);
+      clearInterval(spinnerInterval);
+
+      const endTime = Date.now();
+      const compilationTime = `Code compiled in ${endTime - startTime} ms ✨`;
+
+      resolve(NextResponse.json({ output, time: compilationTime }, { status: 200 }));
+    } catch (error: any) {
+      clearTimeout(waitingMessageTimeout);
+      clearInterval(spinnerInterval);
+      resolve(NextResponse.json({ error: `Error during compilation: ${error.message}` }, { status: 500 }));
+    }
+  });
 }

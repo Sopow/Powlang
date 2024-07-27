@@ -1,197 +1,141 @@
-"use client";
+import Link from "next/link";
 
-import { useState } from "react";
-import axios from "axios";
-import powLangGrammar from "../powlang-grammar";
-import powLangStyle from "../powlang-style";
-
-function applySyntaxHighlighting(code: string | any) {
-  const tokens = [];
-  const regex = new RegExp(
-    Object.keys(powLangGrammar)
-      .map((key) => `(?<${key}>${powLangGrammar[key].source})`)
-      .join("|"),
-    "g"
-  );
-
-  let match: any;
-  while ((match = regex.exec(code)) !== null) {
-    const { index } = match;
-    const tokenType = Object.keys(powLangGrammar).find(
-      (key) => match.groups?.[key] !== undefined
-    );
-    if (tokenType) {
-      tokens.push({
-        type: tokenType,
-        value: match[0],
-        index,
-      });
-    }
-  }
-
-  const highlightedCode = [];
-  let lastIndex = 0;
-  tokens.forEach(({ type, value, index }) => {
-    if (index > lastIndex) {
-      highlightedCode.push(code.slice(lastIndex, index));
-    }
-    highlightedCode.push(
-      <span key={index} style={powLangStyle[type]}>
-        {value}
-      </span>
-    );
-    lastIndex = index + value.length;
-  });
-
-  if (lastIndex < code.length) {
-    highlightedCode.push(code.slice(lastIndex));
-  }
-
-  return highlightedCode;
-}
-
-export default function Home() {
-  const [code, setCode] = useState("");
-  const [output, setOutput] = useState("");
-  const [time, setTime] = useState("");
-  const [enableLogs, setEnableLogs] = useState(false);
-
-  const handleCompile = async () => {
-    try {
-      const response = await axios.post("/api/compiler", { code, enableLogs });
-      setOutput(response.data.output);
-      setTime(response.data.time);
-    } catch (error: any) {
-      setOutput(
-        error.response ? error.response.data.error : "An error occurred"
-      );
-    }
-  };
-
-  const handleKeywordClick = (value: string, key: number) => {
-    return key === 0
-      ? setCode((prevCode) => `${prevCode}${value}`)
-      : setCode((prevCode) => `${prevCode}\n\n${value}`);
-  };
-
-  const handleTestFunCode = () => {
-    const funCode = `# Définir les variables pour le nombre de chats et de chiens
-define number cats as 3
-define number dogs as 4
-
-# Afficher les valeurs initiales
-show("Initialement, nous avons", cats, "chats et", dogs, "chiens.")
-
-# Effectuer des opérations arithmétiques pour augmenter le nombre d'animaux
-define number newCats as cats + 2
-define number newDogs as dogs * 2
-
-# Afficher les nouveaux nombres d'animaux
-show("Après quelques mois, nous avons", newCats, "chats et", newDogs, "chiens.")
-
-# Comparer les nombres de chats et de chiens
-show("Avons-nous plus de chiens que de chats ?", newDogs > newCats)
-show("Avons-nous moins de chats que de chiens ?", newCats < newDogs)
-show("Avons-nous exactement 5 chats maintenant ?", newCats =e 5)
-
-# Boucle pour simuler l'adoption de nouveaux chats
-show("Les chats sont adoptés un par un jusqu'à ce qu'il n'en reste plus.")
-when newCats > 0 :: newCats-- => {
-    show("Il reste", newCats, "chats.")
-}
-
-show("Tous les chats ont été adoptés !")`;
-
-    setCode(funCode);
-  };
-
-  const keywordDictionary = {
-    define: {
-      description: "Defines a new variable.",
-      usage: "define type variable as value",
-      value: `define number x as 0`,
-    },
-    show: {
-      description: "Outputs the value to the console.",
-      usage: "show(value)",
-      value: `show("Value for x:", x)`,
-    },
-    when: {
-      description: "Defines a loop.",
-      usage: "when condition :: increment => { body }",
-      value: `when x < 5 :: x++ => { \n  show(x)\n}`,
-    },
-  };
-
+export default function HomePage() {
   return (
-    <div className="min-h-screen min-w-screen p-8 flex flex-col justify-center items-center bg-gray-900 text-gray-100">
-      <main className="p-20 flex flex-col justify-center items-center w-full max-w-4xl">
-        <div className="flex justify-center items-center gap-8">
-          <h1 className="text-4xl mb-4 text-pink-400 text-center">PowLang Compiler</h1>
-          <img src="/powlang.png" className="h-24 w-24" alt="PowLang Logo"></img>
-        </div>
-        <textarea
-          className="w-full h-48 my-5 p-2 font-mono text-xl border border-gray-700 rounded bg-gray-800 text-gray-100 outline-none"
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          placeholder="Enter your PowLang code here..."
-        />
-        <div className="flex gap-4 mb-4">
-          <button
-            onClick={handleCompile}
-            disabled={code.length <= 0}
-            className="py-2 px-4 bg-pink-400 text-gray-900 rounded disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Compile
-          </button>
-          <button
-            onClick={handleTestFunCode}
-            className="py-2 px-4 bg-blue-500 text-gray-900 rounded"
-          >
-            Tester un code rigolo
-          </button>
-        </div>
-        <label className="flex items-center mb-4">
-          <input
-            type="checkbox"
-            checked={enableLogs}
-            onChange={(e) => setEnableLogs(e.target.checked)}
-            className="mr-2"
+    <div className="min-h-screen p-8 flex flex-col justify-center items-center bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-gray-100">
+      <header className="w-full max-w-6xl flex justify-between items-center mb-16">
+        <h1 className="text-5xl font-bold text-pink-500">PowLang</h1>
+        <nav>
+          <Link href="/compiler">
+            <p className="text-lg text-blue-400 hover:underline">Compiler</p>
+          </Link>
+        </nav>
+      </header>
+
+      <main className="w-full max-w-6xl flex flex-col items-center text-center">
+        <section className="mb-16">
+          <h2 className="text-4xl text-blue-400 mb-6">
+            Bienvenue dans PowLang
+          </h2>
+          <p className="text-xl mb-6">
+            PowLang est un langage de programmation simple conçu pour illustrer
+            les concepts de base des compilateurs. Ce projet inclut un
+            compilateur écrit en JavaScript et une interface web en Next.js pour
+            écrire, compiler et exécuter du code PowLang.
+          </p>
+          <img
+            src="/powlang.png"
+            className="h-48 w-48 mx-auto mb-6"
+            alt="PowLang Logo"
           />
-          <span>Afficher les logs supplémentaires</span><span className="font-bold ml-1">(AVANCÉ)</span>
-        </label>
-        <h2 className="text-2xl text-blue-400 mb-2">Compilation time</h2>
-        <pre className="w-full p-2 bg-gray-800 border border-gray-700 rounded mb-4 overflow-auto">{time}</pre>
-        <h2 className="text-2xl text-blue-400 mb-2">Output</h2>
-        <pre className="w-full p-2 bg-gray-800 border border-gray-700 rounded mb-4 overflow-auto">{output}</pre>
-        <h2 className="text-2xl text-blue-400 mb-2">Code</h2>
-        <pre
-          className="w-full p-2 bg-gray-800 border border-gray-700 rounded overflow-auto"
-          style={powLangStyle['pre[class*="language-"]']}
-        >
-          {applySyntaxHighlighting(code)}
-        </pre>
-        <h2 className="text-2xl text-blue-400 mb-2">Keyword Dictionary</h2>
-        <ul className="list-none p-0 mt-4 w-full">
-          {Object.entries(keywordDictionary).map(
-            ([keyword, { description, value, usage }], key) => (
-              <li
-                key={keyword}
-                onClick={() => handleKeywordClick(value, key)}
-                className="mb-2 cursor-pointer transition-colors p-2 bg-gray-800 border border-gray-700 rounded hover:text-green-400"
-              >
-                <strong className="text-green-400">{keyword}:</strong> {description}
-                <pre
-                  className="my-4 bg-gray-800 border-none text-gray-100 p-0 m-0"
-                  style={powLangStyle['pre[class*="language-"]']}
-                >
-                  {applySyntaxHighlighting(usage)}
-                </pre>
-              </li>
-            )
-          )}
-        </ul>
+        </section>
+
+        <section className="mb-16">
+          <h3 className="text-3xl text-blue-400 mb-6">Fonctionnalités</h3>
+          <ul className="list-disc pl-5 text-left">
+            <li className="mb-2">
+              Déclaration de variables de type nombre et chaîne de caractères
+            </li>
+            <li className="mb-2">Affichage des expressions et des résultats</li>
+            <li className="mb-2">Opérateurs de comparaison et arithmétiques</li>
+            <li className="mb-2">Prise en charge des commentaires</li>
+          </ul>
+        </section>
+
+        <section className="mb-16">
+          <h3 className="text-3xl text-blue-400 mb-6">Installation</h3>
+          <p className="text-lg mb-4">
+            Pour installer PowLang, suivez les étapes suivantes :
+          </p>
+          <pre className="w-full bg-gray-800 p-6 rounded-lg shadow-lg text-left">
+            <code className="block whitespace-pre-wrap text-sm">
+              {`1. Clonez le dépôt:
+    git clone https://github.com/votre-utilisateur/powlang-compiler.git
+    cd powlang-compiler
+
+2. Installez les dépendances pour le compilateur:
+    npm install
+
+3. Accédez au dossier web et installez les dépendances pour l'interface web:
+    cd web
+    npm install
+
+4. Lancez l'application web:
+    npm run dev
+
+Pour exécuter le compilateur avec un fichier PowLang, utilisez la commande suivante:
+    npm run dev
+
+Ouvrez votre navigateur et allez à l'adresse:
+    http://localhost:3000`}
+            </code>
+          </pre>
+        </section>
+
+        <section className="mb-16">
+          <h3 className="text-3xl text-blue-400 mb-6">
+            Exemple de Code PowLang
+          </h3>
+          <pre className="w-full bg-gray-800 p-6 rounded-lg shadow-lg text-left">
+            <code className="block whitespace-pre-wrap text-sm">
+              {`# Définir une variable nombre x
+define number x = 5
+
+# Afficher le résultat de x + 3
+show(x + 3)      # Devrait afficher 8
+
+# Afficher le résultat de x > 2
+show(x > 2)      # Devrait afficher true
+
+# Afficher le résultat de x =e 5 (x est égal à 5)
+show(x =e 5)     # Devrait afficher true
+
+# Afficher le résultat de x =e 3 (x n'est pas égal à 3)
+show(x =e 3)     # Devrait afficher false
+
+# Afficher le résultat de x =s 5 (x est égal à 5)
+show(x =s 5)     # Devrait afficher true
+
+# Afficher le résultat de x =s 3 (x est supérieur ou égal à 3)
+show(x =s 3)     # Devrait afficher true
+
+# Afficher le résultat de x =i 5 (x est inférieur ou égal à 5)
+show(x =i 5)     # Devrait afficher true
+
+# Afficher le résultat de x =i 6 (x est inférieur ou égal à 6)
+show(x =i 6)     # Devrait afficher true
+
+# Afficher le résultat de x =i 3 (x n'est pas inférieur ou égal à 3)
+show(x =i 3)     # Devrait afficher false
+
+# Définir une chaîne y
+define string y = "hello"
+
+# Afficher la chaîne y
+show(y)          # Devrait afficher hello
+
+# Afficher le résultat de y =e "hello"
+show(y =e "hello") # Devrait afficher true
+
+# Afficher le résultat de y =e "world"
+show(y =e "world") # Devrait afficher false`}
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h3 className="text-3xl text-blue-400 mb-6">Contributions</h3>
+          <p className="text-lg">
+            Les contributions sont les bienvenues ! Pour contribuer, veuillez
+            créer une branche, ajouter vos modifications et soumettre une pull
+            request.
+          </p>
+        </section>
       </main>
+
+      <footer className="mt-12">
+        <p className="text-lg">© 2024 PowLang. Tous droits réservés.</p>
+      </footer>
     </div>
   );
 }
