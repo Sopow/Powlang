@@ -189,7 +189,9 @@ show("Tous les chats ont été adoptés !")`;
         <h2 className="text-2xl text-blue-400 mb-2">Compilation time</h2>
         <pre className="w-full p-2 bg-gray-800 border border-gray-700 rounded mb-4 overflow-auto">{time}</pre>
         <h2 className="text-2xl text-blue-400 mb-2">Output</h2>
-        <pre className="w-full p-2 bg-gray-800 border border-gray-700 rounded mb-4 overflow-auto">{output}</pre>
+        <pre className="w-full p-2 bg-gray-800 border border-gray-700 rounded mb-4 overflow-auto">
+          {isCompiling ? `${spinnerFrames[spinnerFrame]} Compiling... This is taking longer than usual.` : output}
+        </pre>
         <h2 className="text-2xl text-blue-400 mb-2">Code</h2>
         <pre
           className="w-full p-2 bg-gray-800 border border-gray-700 rounded overflow-auto"
