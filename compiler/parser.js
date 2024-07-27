@@ -125,19 +125,19 @@ function parse(tokens, enableLogs = false) {
             throw new TypeError('Expected "::" after condition');
         }
         current++; // skip '::'
-
+    
         const incrementIdentifier = parsePrimary();
         const incrementType = tokens[current].type;
         if (incrementType !== 'increment' && incrementType !== 'decrement') {
             throw new TypeError(`Expected "++" or "--" after identifier, found ${tokens[current].type}`);
         }
         current++; // skip '++' or '--'
-
+    
         const increment = {
             type: incrementType === 'increment' ? 'Increment' : 'Decrement',
             argument: incrementIdentifier
         };
-
+    
         if (tokens[current].type !== 'arrow') {
             throw new TypeError(`Expected "=>" after increment, found ${tokens[current].type}`);
         }
@@ -151,7 +151,7 @@ function parse(tokens, enableLogs = false) {
             body.push(parseStatement());
         }
         current++; // skip '}'
-
+    
         if (enableLogs) console.log(`Parse When: ${JSON.stringify(condition)}, ${JSON.stringify(increment)}, ${JSON.stringify(body)}`);
         return {
             type: 'When',
@@ -160,6 +160,7 @@ function parse(tokens, enableLogs = false) {
             body: body,
         };
     }
+    
 
     function parseExpression() {
         let left = parsePrimary();

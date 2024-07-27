@@ -3,23 +3,35 @@
   "displayName": "PowLang",
   "description": "Syntax highlighting for PowLang",
   "version": "0.0.1",
+  "publisher": "sopow",
   "engines": {
-    "vscode": "^1.54.0"
+    "vscode": "^1.50.0"
   },
   "categories": [
     "Programming Languages"
   ],
   "contributes": {
-    "languages": [{
-      "id": "pow",
-      "aliases": ["Powlang", "pow"],
-      "extensions": [".pow"],
-      "configuration": "./language-configuration.json"
-    }],
-    "grammars": [{
-      "language": "pow",
-      "scopeName": "source.powlang",
-      "path": "./syntaxes/pow.tmLanguage.json"
-    }]
+    "grammars": [
+      {
+        "language": "powlang",
+        "scopeName": "source.powlang",
+        "path": "./syntaxes/powlang.tmLanguage.json"
+      }
+    ],
+    "languages": [
+      {
+        "id": "powlang",
+        "aliases": ["PowLang", "powlang"],
+        "extensions": [".pow"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "iconThemes": [
+      {
+        "id": "powlang-icons",
+        "label": "PowLang Icons",
+        "path": "./icons/powlang-icon-theme.json"
+      }
+    ]
   }
 }

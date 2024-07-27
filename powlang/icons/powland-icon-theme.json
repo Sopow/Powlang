@@ -1,0 +1,17 @@
+{
+    "iconDefinitions": {
+      "powlang-icon": {
+        "iconPath": "./powlang-icon.png"
+      }
+    },
+    "fileExtensions": {
+      "pow": "powlang-icon"
+    },
+    "fileNames": {
+      ".pow": "powlang-icon"
+    },
+    "languageIds": {
+      "powlang": "powlang-icon"
+    }
+  }
+  

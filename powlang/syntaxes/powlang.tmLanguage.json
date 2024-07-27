@@ -4,7 +4,7 @@
   "patterns": [
     {
       "name": "comment.line.double-slash.powlang",
-      "begin": "//",
+      "begin": "#",
       "beginCaptures": {
         "0": {
           "name": "punctuation.definition.comment.powlang"
@@ -20,7 +20,7 @@
     },
     {
       "name": "keyword.control.powlang",
-      "match": "\\b(define|number|string|show)\\b"
+      "match": "\\b(define|number|string|show|when|as)\\b"
     },
     {
       "name": "constant.language.boolean.powlang",
@@ -28,7 +28,7 @@
     },
     {
       "name": "keyword.operator.powlang",
-      "match": "(=e|=s|=i|\\+|\\-|\\*|\\/|>|<|>=|<=|==)"
+      "match": "(=e|=s|=i|\\+|\\-|\\*|\\/|>|<|>=|<=|==|%)"
     },
     {
       "name": "constant.numeric.powlang",

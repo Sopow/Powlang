@@ -1,18 +1,19 @@
 function evaluate(ast, enableLogs = false) {
     const context = {};
+    const MAX_ITERATIONS = 1000000000;
 
-    function evaluateNode(node) {
+    function evaluateNode(node, context) {
         switch (node.type) {
             case 'Program':
                 if (enableLogs) console.log('Evaluating Program');
-                node.body.forEach(evaluateNode);
+                node.body.forEach(n => evaluateNode(n, context));
                 break;
             case 'Define':
-                context[node.id] = evaluateNode(node.value);
+                context[node.id] = evaluateNode(node.value, context);
                 if (enableLogs) console.log(`Evaluating Define: ${node.id} = ${context[node.id]}`);
                 break;
             case 'Show':
-                const showValues = node.values.map(evaluateNode);
+                const showValues = node.values.map(n => evaluateNode(n, context));
                 console.log(...showValues);  // Always show the values
                 if (enableLogs) console.log(`Evaluating Show: ${showValues}`);
                 break;
@@ -30,8 +31,8 @@ function evaluate(ast, enableLogs = false) {
                     throw new ReferenceError(`Undefined variable: ${node.name}`);
                 }
             case 'BinaryExpression':
-                const left = evaluateNode(node.left);
-                const right = evaluateNode(node.right);
+                const left = evaluateNode(node.left, context);
+                const right = evaluateNode(node.right, context);
                 if (enableLogs) console.log(`Evaluating BinaryExpression: ${left} ${node.operator} ${right}`);
                 switch (node.operator) {
                     case 'plus':
@@ -42,8 +43,6 @@ function evaluate(ast, enableLogs = false) {
                         return left * right;
                     case 'slash':
                         return left / right;
-                    case 'mod':
-                        return left % right;
                     case 'gt':
                         return left > right;
                     case 'lt':
@@ -61,9 +60,14 @@ function evaluate(ast, enableLogs = false) {
                 }
             case 'When':
                 if (enableLogs) console.log('Evaluating When');
-                while (evaluateNode(node.condition)) {
-                    node.body.forEach(evaluateNode);
-                    evaluateNode(node.increment);
+                let iterations = 0;
+                while (evaluateNode(node.condition, context) && iterations < MAX_ITERATIONS) {
+                    node.body.forEach(n => evaluateNode(n, context));
+                    evaluateNode(node.increment, context);
+                    iterations++;
+                }
+                if (iterations === MAX_ITERATIONS) {
+                    console.warn('Maximum iterations reached. Loop terminated to prevent infinite loop.');
                 }
                 break;
             case 'Increment':
@@ -83,7 +87,7 @@ function evaluate(ast, enableLogs = false) {
         }
     }
 
-    evaluateNode(ast);
+    evaluateNode(ast, context);
 }
 
 module.exports = evaluate;
