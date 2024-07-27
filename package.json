@@ -1,12 +1,16 @@
 {
-  "name": "my_tex_compiler",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "name": "powlang",
+  "displayName": "PowLang",
+  "description": "Syntax highlighting for PowLang",
+  "version": "0.0.1",
+  "publisher": "your-publisher-name",
+  "engines": {
+    "vscode": "^1.50.0"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": ""
+  "categories": [
+    "Programming Languages"
+  ],
+  "dependencies": {
+    "katex": "^0.16.11"
+  }
 }

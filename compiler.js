@@ -4,6 +4,7 @@ const parse = require('./parser');
 const evaluate = require('./generator');
 
 const inputFilePath = process.argv[2];
+const enableLogs = process.argv.includes('--enable-logs');
 
 if (!inputFilePath) {
     console.error('Please provide an input file path.');
@@ -17,15 +18,13 @@ fs.readFile(inputFilePath, 'utf8', (err, data) => {
     }
 
     try {
-        const startTime = Date.now();
-        const tokens = tokenize(data);
-        // console.log('Tokens:', tokens);
-        const ast = parse(tokens);
-        // console.log('AST:', JSON.stringify(ast, null, 2));
-        evaluate(ast);
-        const endTime = Date.now();
-        console.log(`Compilation time: ${endTime - startTime} ms`);
+        const tokens = tokenize(data, enableLogs);
+        if (enableLogs) console.log('Tokens:', tokens);
+        const ast = parse(tokens, enableLogs);
+        if (enableLogs) console.log('AST:', JSON.stringify(ast, null, 2));
+        evaluate(ast, enableLogs);
     } catch (error) {
         console.error(`Error during compilation: ${error.message}`);
+        process.exit(1);
     }
 });

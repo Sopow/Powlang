@@ -1,0 +1,25 @@
+{
+  "name": "powlang",
+  "displayName": "PowLang",
+  "description": "Syntax highlighting for PowLang",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.54.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "pow",
+      "aliases": ["Powlang", "pow"],
+      "extensions": [".pow"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "pow",
+      "scopeName": "source.powlang",
+      "path": "./syntaxes/pow.tmLanguage.json"
+    }]
+  }
+}

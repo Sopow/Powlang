@@ -6,7 +6,7 @@ const powLangGrammar: any = {
   string: /"(?:[^"\\]|\\.)*"/,
   identifier: /\b[a-zA-Z_]\w*\b/,
   punctuation: /[()]/,
-  comment: /\/\/.*/,
+  comment: /#.*/,
 };
 
 export default powLangGrammar;
