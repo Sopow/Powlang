@@ -1,7 +1,52 @@
 "use client";
 import Link from "next/link";
-import { applySyntaxHighlighting } from "./compiler/page";
 import powLangStyle from "@/powlang-style";
+import powLangGrammar from "@/powlang-grammar";
+
+function applySyntaxHighlighting(code: string | any) {
+  const tokens = [];
+  const regex = new RegExp(
+    Object.keys(powLangGrammar)
+      .map((key) => `(?<${key}>${powLangGrammar[key].source})`)
+      .join("|"),
+    "g"
+  );
+
+  let match: any;
+  while ((match = regex.exec(code)) !== null) {
+    const { index } = match;
+    const tokenType = Object.keys(powLangGrammar).find(
+      (key) => match.groups?.[key] !== undefined
+    );
+    if (tokenType) {
+      tokens.push({
+        type: tokenType,
+        value: match[0],
+        index,
+      });
+    }
+  }
+
+  const highlightedCode = [];
+  let lastIndex = 0;
+  tokens.forEach(({ type, value, index }) => {
+    if (index > lastIndex) {
+      highlightedCode.push(code.slice(lastIndex, index));
+    }
+    highlightedCode.push(
+      <span key={index} style={powLangStyle[type]}>
+        {value}
+      </span>
+    );
+    lastIndex = index + value.length;
+  });
+
+  if (lastIndex < code.length) {
+    highlightedCode.push(code.slice(lastIndex));
+  }
+
+  return highlightedCode;
+}
 
 export default function HomePage() {
   return (

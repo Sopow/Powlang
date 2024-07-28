@@ -5,7 +5,7 @@ import axios from "axios";
 import powLangGrammar from "@/powlang-grammar";
 import powLangStyle from "@/powlang-style";
 
-export function applySyntaxHighlighting(code: string | any) {
+function applySyntaxHighlighting(code: string | any) {
   const tokens = [];
   const regex = new RegExp(
     Object.keys(powLangGrammar)
