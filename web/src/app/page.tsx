@@ -1,4 +1,7 @@
+"use client";
 import Link from "next/link";
+import { applySyntaxHighlighting } from "./compiler/page";
+import powLangStyle from "@/powlang-style";
 
 export default function HomePage() {
   return (
@@ -50,8 +53,7 @@ export default function HomePage() {
           <pre className="w-full bg-gray-800 p-6 rounded-lg shadow-lg text-left">
             <code className="block whitespace-pre-wrap text-sm">
               {`1. Clonez le dépôt:
-    git clone https://github.com/votre-utilisateur/powlang-compiler.git
-    cd powlang-compiler
+    git clone https://github.com/Sopow/powland.git
 
 2. Installez les dépendances pour le compilateur:
     npm install
@@ -63,7 +65,7 @@ export default function HomePage() {
 4. Lancez l'application web:
     npm run dev
 
-Pour exécuter le compilateur avec un fichier PowLang, utilisez la commande suivante:
+Pour exécuter le compilateur avec un fichier PowLang, utilisez la commande suivante dans le directory root:
     npm run dev
 
 Ouvrez votre navigateur et allez à l'adresse:
@@ -77,49 +79,75 @@ Ouvrez votre navigateur et allez à l'adresse:
             Exemple de Code PowLang
           </h3>
           <pre className="w-full bg-gray-800 p-6 rounded-lg shadow-lg text-left">
-            <code className="block whitespace-pre-wrap text-sm">
-              {`# Définir une variable nombre x
-define number x = 5
+            <pre
+              className="w-full p-2 bg-gray-800 border border-gray-700 rounded overflow-auto"
+              style={powLangStyle['pre[class*="language-"]']}
+            >
+              {applySyntaxHighlighting(`# Exemples de tests pour les fonctionnalités de powlang
+# Définir des variables de différents types de nombres
+define number a as -5
+define number b as 10.5
+define number c as 2.2e3 # 2200 en notation scientifique
+define number d as -3.5e-2 # -0.035 en notation scientifique
 
-# Afficher le résultat de x + 3
-show(x + 3)      # Devrait afficher 8
+# Afficher les valeurs initiales
+show("Initial values:", a, b, c, d)
 
-# Afficher le résultat de x > 2
-show(x > 2)      # Devrait afficher true
+# Calculer des sommes et des produits
+define number sum as a + b + c + d
+show("Sum:", sum)
 
-# Afficher le résultat de x =e 5 (x est égal à 5)
-show(x =e 5)     # Devrait afficher true
+define number product as a * b * c * d
+show("Product:", product)
 
-# Afficher le résultat de x =e 3 (x n'est pas égal à 3)
-show(x =e 3)     # Devrait afficher false
+# Utiliser une condition ternaire pour déterminer la valeur maximale
+define number max as (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c)
+show("Max value:", max)
 
-# Afficher le résultat de x =s 5 (x est égal à 5)
-show(x =s 5)     # Devrait afficher true
+# Utiliser une condition ternaire pour déterminer la valeur minimale
+define number min as (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c)
+show("Min value:", min)
 
-# Afficher le résultat de x =s 3 (x est supérieur ou égal à 3)
-show(x =s 3)     # Devrait afficher true
+# Vérifier des conditions avec ala et otw
+show("Checking conditions:")
 
-# Afficher le résultat de x =i 5 (x est inférieur ou égal à 5)
-show(x =i 5)     # Devrait afficher true
+ala a + b > c -> {
+  show("a + b is greater than c")
+} otw -> {
+  show("a + b is not greater than c")
+}
 
-# Afficher le résultat de x =i 6 (x est inférieur ou égal à 6)
-show(x =i 6)     # Devrait afficher true
+ala a * b > c * c -> {
+  show("a * b is greater than c squared")
+} otw -> {
+  show("a * b is not greater than c squared")
+}
 
-# Afficher le résultat de x =i 3 (x n'est pas inférieur ou égal à 3)
-show(x =i 3)     # Devrait afficher false
+# Incrémenter un compteur avec une boucle when
+define number counter as 0
+show("Initial counter value:", counter)
 
-# Définir une chaîne y
-define string y = "hello"
+show("Incrementing counter to five:")
+when counter < 5 :: counter++ => {
+  show("Counter value:", counter)
+}
+show("Counter has reached five")
 
-# Afficher la chaîne y
-show(y)          # Devrait afficher hello
+# Calculer la factorielle d'un nombre
+define number factorial as 1
+define number numberToFactorial as 5
+define number i as 1
 
-# Afficher le résultat de y =e "hello"
-show(y =e "hello") # Devrait afficher true
+show("Calculating factorial of", numberToFactorial)
 
-# Afficher le résultat de y =e "world"
-show(y =e "world") # Devrait afficher false`}
-            </code>
+when i =i numberToFactorial :: i++ => {
+  factorial = factorial * i
+  show("Current factorial value:", factorial)
+}
+
+show("Factorial of", numberToFactorial, "is", factorial)
+`)}
+            </pre>
           </pre>
         </section>
 
@@ -134,7 +162,9 @@ show(y =e "world") # Devrait afficher false`}
       </main>
 
       <footer className="mt-12">
-        <p className="text-lg">© 2024 PowLang. Tous droits réservés.</p>
+        <p className="text-lg">
+          © {new Date().getFullYear()} PowLang. Tous droits réservés.
+        </p>
       </footer>
     </div>
   );

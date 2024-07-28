@@ -5,7 +5,7 @@ import axios from "axios";
 import powLangGrammar from "@/powlang-grammar";
 import powLangStyle from "@/powlang-style";
 
-function applySyntaxHighlighting(code: string | any) {
+export function applySyntaxHighlighting(code: string | any) {
   const tokens = [];
   const regex = new RegExp(
     Object.keys(powLangGrammar)
@@ -126,7 +126,11 @@ when newCats > 0 :: newCats-- => {
     show("Il reste", newCats, "chats.")
 }
 
-show("Tous les chats ont été adoptés !")`;
+ala newCats =e 0 -> {
+  show("Tous les chats ont été adoptés !")
+} otw -> { 
+ show("Il reste encore des chats non adoptés, plus précisement :", newCats)
+}`;
 
     setCode(funCode);
   };
@@ -147,8 +151,18 @@ show("Tous les chats ont été adoptés !")`;
       usage: "when condition :: increment => { body }",
       value: `when x < 5 :: x++ => { \n  show(x)\n}`,
     },
+    ala: {
+      description: "Defines a conditional block.",
+      usage: "ala condition -> { body } otw -> { elseBody }",
+      value: `ala x > 5 -> { \n  show("x is greater than 5")\n} otw -> { \n  show("x is not greater than 5")\n}`,
+    },
+    ternary: {
+      description: "Defines a ternary conditional expression.",
+      usage: "condition ? expressionIfTrue : expressionIfFalse",
+      value: `x > 5 ? 10 : 0`,
+    }
   };
-
+  
   return (
     <div className="min-h-screen min-w-screen p-4 flex flex-col justify-center items-center bg-gray-900 text-gray-100">
       <main className="p-6 flex flex-col justify-center items-center w-full max-w-4xl">

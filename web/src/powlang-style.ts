@@ -16,38 +16,38 @@ const powLangStyle: any = {
     fontFamily: 'Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace',
   },
   keyword: {
-    color: '#c5a5c5',
+    color: '#c678dd', // Couleur pour les mots-clés
   },
   operator: {
-    color: '#f92672',
+    color: '#56b6c2', // Couleur pour les opérateurs
   },
   number: {
-    color: '#ae81ff',
+    color: '#d19a66', // Couleur pour les nombres
   },
   string: {
-    color: '#e6db74',
+    color: '#98c379', // Couleur pour les chaînes de caractères
   },
   boolean: {
-    color: '#ae81ff',
+    color: '#d19a66', // Couleur pour les booléens
   },
   identifier: {
-    color: '#a6e22e',
+    color: '#61afef', // Couleur pour les identificateurs
   },
   punctuation: {
-    color: '#f8f8f2',
+    color: '#abb2bf', // Couleur pour la ponctuation
   },
   comment: {
-    color: '#757575',
+    color: '#5c6370', // Couleur pour les commentaires
     fontStyle: 'italic',
   },
   eqe: {
-    color: '#f92672',
+    color: '#56b6c2', // Couleur pour l'opérateur d'égalité
   },
   eqs: {
-    color: '#f92672',
+    color: '#56b6c2', // Couleur pour l'opérateur de supérieur ou égal
   },
   eqi: {
-    color: '#f92672',
+    color: '#56b6c2', // Couleur pour l'opérateur de inférieur ou égal
   },
 };
 
