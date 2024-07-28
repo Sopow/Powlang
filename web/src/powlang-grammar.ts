@@ -1,5 +1,5 @@
 const powLangGrammar: any = {
-  keyword: /\b(?:define|number|string|show|when)\b/,
+  keyword: /\b(?:define|number|string|show|when|as)\b/,
   boolean: /\b(?:true|false)\b/,
   operator: /=e|=s|=i|[+*\/><=-]/,
   number: /\b\d+\b/,
