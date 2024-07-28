@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "scripts": {
     "deploy": "vercel --prod",
-    "dev": "node compiler/compiler.js example.pow"
+    "dev": "node compiler/compiler.js example.pow",
+    "dev-logs": "node compiler/compiler.js example.pow --enable-logs"
   },
   "dependencies": {
     "@vercel/blob": "^0.23.4",

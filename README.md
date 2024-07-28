@@ -9,13 +9,14 @@ PowLang est un langage de programmation simple conçu pour illustrer les concept
 - Opérateurs de comparaison et arithmétiques
 - Boucles `when`
 - Prise en charge des commentaires
+- Conditions avec opérateurs tertiaires et if else
 
 ## Installation
 
 1. Clonez le dépôt:
     ```sh
     git clone https://github.com/Sopow/powlang.git
-    cd powlang-compiler
+    cd powlang
     ```
 
 2. Installez les dépendances pour le compilateur:
@@ -99,10 +100,6 @@ show(y =e "world") # Should print false
 
 # Define another number z
 define number z as 10
-
-# Show the result of z % 3 (modulo operation)
-define number modResult as z % 3
-show(modResult) # Should print 1
 
 # Use a loop to decrement x until it is less than or equal to 0
 when x > 0 :: x-- => {

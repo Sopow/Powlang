@@ -20,7 +20,7 @@
     },
     {
       "name": "keyword.control.powlang",
-      "match": "\\b(define|number|string|show|when|as)\\b"
+      "match": "\\b(define|number|string|show|when|as|ala|otw)\\b"
     },
     {
       "name": "constant.language.boolean.powlang",
@@ -32,7 +32,7 @@
     },
     {
       "name": "constant.numeric.powlang",
-      "match": "\\b\\d+\\b"
+      "match": "\\b-?\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?\\b"
     },
     {
       "name": "string.quoted.double.powlang",

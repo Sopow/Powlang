@@ -125,19 +125,19 @@ function parse(tokens, enableLogs = false) {
             throw new TypeError('Expected "::" after condition');
         }
         current++; // skip '::'
-    
+
         const incrementIdentifier = parsePrimary();
         const incrementType = tokens[current].type;
         if (incrementType !== 'increment' && incrementType !== 'decrement') {
             throw new TypeError(`Expected "++" or "--" after identifier, found ${tokens[current].type}`);
         }
         current++; // skip '++' or '--'
-    
+
         const increment = {
             type: incrementType === 'increment' ? 'Increment' : 'Decrement',
             argument: incrementIdentifier
         };
-    
+
         if (tokens[current].type !== 'arrow') {
             throw new TypeError(`Expected "=>" after increment, found ${tokens[current].type}`);
         }
@@ -151,7 +151,7 @@ function parse(tokens, enableLogs = false) {
             body.push(parseStatement());
         }
         current++; // skip '}'
-    
+
         if (enableLogs) console.log(`Parse When: ${JSON.stringify(condition)}, ${JSON.stringify(increment)}, ${JSON.stringify(body)}`);
         return {
             type: 'When',
@@ -160,21 +160,79 @@ function parse(tokens, enableLogs = false) {
             body: body,
         };
     }
-    
+
+    function parseCondition() {
+        current++; // skip 'ala'
+        const condition = parseExpression();
+        if (tokens[current].type !== 'arrow') {
+            throw new TypeError('Expected "->" after condition');
+        }
+        current++; // skip '->'
+        if (tokens[current].type !== 'paren' || tokens[current].value !== '{') {
+            throw new TypeError(`Expected "{" to start ala body, found ${tokens[current].type}`);
+        }
+        current++; // skip '{'
+        const body = [];
+        while (tokens[current].type !== 'paren' || tokens[current].value !== '}') {
+            body.push(parseStatement());
+        }
+        current++; // skip '}'
+
+        const node = {
+            type: 'Condition',
+            condition: condition,
+            body: body,
+        };
+
+        if (tokens[current] && tokens[current].type === 'keyword' && tokens[current].value === 'otw') {
+            current++; // skip 'otw'
+            if (tokens[current].type !== 'arrow') {
+                throw new TypeError('Expected "->" after "otw"');
+            }
+            current++; // skip '->'
+            if (tokens[current].type !== 'paren' || tokens[current].value !== '{') {
+                throw new TypeError(`Expected "{" to start otw body, found ${tokens[current].type}`);
+            }
+            current++; // skip '{'
+            const elseBody = [];
+            while (tokens[current].type !== 'paren' || tokens[current].value !== '}') {
+                elseBody.push(parseStatement());
+            }
+            current++; // skip '}'
+            node.elseBody = elseBody;
+        }
+
+        if (enableLogs) console.log(`Parse Condition: ${JSON.stringify(node)}`);
+        return node;
+    }
 
     function parseExpression() {
         let left = parsePrimary();
         let token = tokens[current];
 
-        while (token && ['plus', 'gt', 'lt', 'eqe', 'eqs', 'eqi', 'eq', 'star', 'slash', 'minus', 'mod'].includes(token.type)) {
+        while (token && ['plus', 'gt', 'lt', 'eqe', 'eqs', 'eqi', 'eq', 'star', 'slash', 'minus', 'mod', 'question'].includes(token.type)) {
             current++;
             const right = parsePrimary();
-            left = {
-                type: 'BinaryExpression',
-                operator: token.type,
-                left: left,
-                right: right,
-            };
+            if (token.type === 'question') {
+                if (tokens[current].type !== 'colon') {
+                    throw new TypeError('Expected ":" after "?" in conditional expression');
+                }
+                current++; // skip ':'
+                const alternate = parsePrimary();
+                left = {
+                    type: 'ConditionalExpression',
+                    test: left,
+                    consequent: right,
+                    alternate: alternate
+                };
+            } else {
+                left = {
+                    type: 'BinaryExpression',
+                    operator: token.type,
+                    left: left,
+                    right: right,
+                };
+            }
             if (enableLogs) console.log(`Parse BinaryExpression: ${JSON.stringify(left)}`);
             token = tokens[current];
         }
@@ -182,6 +240,25 @@ function parse(tokens, enableLogs = false) {
         return left;
     }
 
+    function parseAssignment() {
+        const identifier = tokens[current];
+        current++; // skip identifier
+    
+        if (tokens[current].type !== 'eq') {
+            throw new TypeError('Expected "=" for assignment');
+        }
+        current++; // skip '='
+    
+        const value = parseExpression();
+    
+        if (enableLogs) console.log(`Parse Assignment: ${identifier.value} = ${JSON.stringify(value)}`);
+        return {
+            type: 'Assignment',
+            id: identifier.value,
+            value: value,
+        };
+    }
+    
     function parseStatement() {
         const token = tokens[current];
         if (token.type === 'keyword') {
@@ -191,11 +268,15 @@ function parse(tokens, enableLogs = false) {
                 return parseShow();
             } else if (token.value === 'when') {
                 return parseWhen();
+            } else if (token.value === 'ala') {
+                return parseCondition();
             }
+        } else if (token.type === 'identifier') {
+            return parseAssignment();
         }
         throw new TypeError('Unexpected token: ' + token.type);
     }
-
+    
     function parseStatements() {
         const statements = [];
         while (current < tokens.length) {

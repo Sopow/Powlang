@@ -1,6 +1,66 @@
-# Define a number x
-define number x as 1
-# Use a loop to decrement x until it is less than or equal to 0
-when x < 10000000 :: x++ => {
-    show(x)
+# Exemples de tests pour les fonctionnalités de powlang
+
+# Fichier d'exemple : example.pow
+
+# Définir des variables de différents types de nombres
+define number a as -5
+define number b as 10.5
+define number c as 2.2e3 # 2200 en notation scientifique
+define number d as -3.5e-2 # -0.035 en notation scientifique
+
+# Afficher les valeurs initiales
+show("Initial values:", a, b, c, d)
+
+# Calculer des sommes et des produits
+define number sum as a + b + c + d
+show("Sum:", sum)
+
+define number product as a * b * c * d
+show("Product:", product)
+
+# Utiliser une condition ternaire pour déterminer la valeur maximale
+define number max as (a > b) ? ((a > c) ? a : c) : ((b > c) ? b : c)
+show("Max value:", max)
+
+# Utiliser une condition ternaire pour déterminer la valeur minimale
+define number min as (a < b) ? ((a < c) ? a : c) : ((b < c) ? b : c)
+show("Min value:", min)
+
+# Vérifier des conditions avec ala et otw
+show("Checking conditions:")
+
+ala a + b > c -> {
+  show("a + b is greater than c")
+} otw -> {
+  show("a + b is not greater than c")
 }
+
+ala a * b > c * c -> {
+  show("a * b is greater than c squared")
+} otw -> {
+  show("a * b is not greater than c squared")
+}
+
+# Incrémenter un compteur avec une boucle when
+define number counter as 0
+show("Initial counter value:", counter)
+
+show("Incrementing counter to five:")
+when counter < 5 :: counter++ => {
+  show("Counter value:", counter)
+}
+show("Counter has reached five")
+
+# Calculer la factorielle d'un nombre
+define number factorial as 1
+define number numberToFactorial as 5
+define number i as 1
+
+show("Calculating factorial of", numberToFactorial)
+
+when i =i numberToFactorial :: i++ => {
+  factorial = factorial * i
+  show("Current factorial value:", factorial)
+}
+
+show("Factorial of", numberToFactorial, "is", factorial)

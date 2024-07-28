@@ -1,3 +1,4 @@
+// compiler.js
 const fs = require('fs');
 const tokenize = require('./lexer');
 const parse = require('./parser');
@@ -19,7 +20,7 @@ fs.readFile(inputFilePath, 'utf8', (err, data) => {
 
     try {
         const tokens = tokenize(data, enableLogs);
-        if (enableLogs) console.log('Tokens:', tokens);
+        // if (enableLogs) console.log('Tokens:', tokens);
         const ast = parse(tokens, enableLogs);
         if (enableLogs) console.log('AST:', JSON.stringify(ast, null, 2));
         evaluate(ast, enableLogs);
