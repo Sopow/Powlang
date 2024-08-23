@@ -53,11 +53,6 @@ export default function HomePage() {
     <div className="min-h-screen p-8 flex flex-col justify-center items-center bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 text-gray-100">
       <header className="w-full max-w-6xl flex justify-between items-center mb-16">
         <h1 className="text-5xl font-bold text-pink-500">PowLang</h1>
-        <nav>
-          <Link href="/compiler">
-            <p className="text-lg text-blue-400 hover:underline">Compiler</p>
-          </Link>
-        </nav>
       </header>
 
       <main className="w-full max-w-6xl flex flex-col items-center text-center">
@@ -76,6 +71,22 @@ export default function HomePage() {
             className="h-48 w-48 mx-auto mb-6"
             alt="PowLang Logo"
           />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 w-full max-w-md mx-auto">
+            <Link href="/compiler">
+              <button className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                Accéder au compilateur
+              </button>
+            </Link>
+            <a
+              href="https://github.com/Sopow/powlang"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <button className="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 px-4 rounded">
+                Accéder au code sur Github
+              </button>
+            </a>
+          </div>
         </section>
 
         <section className="mb-16">
@@ -90,7 +101,7 @@ export default function HomePage() {
           </ul>
         </section>
 
-        <section className="mb-16">
+        <section className="mb-16 w-full">
           <h3 className="text-3xl text-blue-400 mb-6">Installation</h3>
           <p className="text-lg mb-4">
             Pour installer PowLang, suivez les étapes suivantes :
@@ -119,7 +130,7 @@ Ouvrez votre navigateur et allez à l'adresse:
           </pre>
         </section>
 
-        <section className="mb-16">
+        <section className="mb-16 w-full">
           <h3 className="text-3xl text-blue-400 mb-6">
             Exemple de Code PowLang
           </h3>
